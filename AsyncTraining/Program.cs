@@ -1,27 +1,38 @@
-﻿namespace AsyncTraining;
+﻿using System.Diagnostics;
+
+namespace AsyncTraining;
 
 class Program
 {
     static async Task Main(string[] args)
     {
-        Console.WriteLine(ProcessData("Файл 1"));
-        Console.WriteLine(ProcessData("Файл 2"));
-        Console.WriteLine(ProcessData("Файл 3"));
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+        ProcessData("Файл 1");
+        ProcessData("Файл 2");
+        ProcessData("Файл 3");
+        stopwatch.Stop();
+        Console.WriteLine(stopwatch.Elapsed);
         
-        Console.WriteLine(await ProcessDataAsync("Файл 11"));
-        Console.WriteLine(await ProcessDataAsync("Файл 22"));
-        Console.WriteLine(await ProcessDataAsync("Файл 33"));
+        stopwatch.Restart();
+        stopwatch.Start();
+        var task1 = ProcessDataAsync("Файл 11");
+        var task2 = ProcessDataAsync("Файл 22");
+        var task3 = ProcessDataAsync("Файл 33");
+        await Task.WhenAll(task1, task2, task3);
+        stopwatch.Stop();
+        Console.WriteLine(stopwatch.Elapsed);
     }
 
-    static string ProcessData(string dataName)
+    static void ProcessData(string dataName)
     {
         Thread.Sleep(3000);
-        return $"Обработка {dataName} завершена за 3 секунды";
+        Console.WriteLine($"Обработка {dataName} завершена за 3 секунды");
     }
 
-    static async Task<string> ProcessDataAsync(string dataName)
+    static async Task ProcessDataAsync(string dataName)
     {
         await Task.Delay(3000);
-        return $"Обработка {dataName} завершена за 3 секунды";
+        Console.WriteLine($"Обработка {dataName} завершена за 3 секунды");
     }
 }
